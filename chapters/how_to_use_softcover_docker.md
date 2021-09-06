@@ -121,7 +121,7 @@ Correspondingly, the `chapters` directory contains the single markdown file list
 
 Notice also that there is no preface or table of contents either in the Book.txt file for an article.
 
-## Building and Serving html
+## Building html files
 
 As we add, remove and edit markdown files in the chapters directory, we might want to build and preview the content in a web browser.
 
@@ -137,7 +137,9 @@ This command uses the markdown files in `./chapters` directory mapped to the `/b
 
 The html generator also generates a `book` html file which includes all the chapters compiled to single html file.
 
-We can then view the html chapter files or the `book` html file mapped to our local `./html` directory, by using a web browser to open the files.
+We can then view the html chapter files or the `book` html file from our local `./html` directory, by using a web browser to open the files.
+
+## Serving generated html files
 
 In addition to building the html files we can build and also serve the `book` html file to our local web browser by running the following command instead:
 
@@ -147,11 +149,11 @@ docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc ser
 
 The above docker command runs the `sc server` softcover command in the container.
 
-The command first runs the `sc build:html` to build the book html file in the `/book/html` directory of the container, then starts up a web server inside the container that serves the `book` html file through port 4000 of the container.
+The command first runs the `sc build:html` to build the `book` html file in the `/book/html` directory of the container, then starts up a web server inside the container that serves the `book` html file through port 4000 of the container.
 
 > The port number 4000 is exposed in the dockerfile.
 
-Since the docker command maps the container port 4000 to our local port 4000 , we can to navigate to localhost:4000 with our local web browser to view the html content.
+Since the docker command maps the container port 4000 to our local port 4000 , we can navigate to localhost:4000 with our local web browser to view the html content.
 
 As we change the content of the `chapters` directory the change is detected and the `sc build:html` command is re-run and web server is reloaded, allowing us to instantly preview the output of our changes.
 
@@ -159,13 +161,11 @@ Of course we can always run the `sc build:html` command using the container to f
 
 ## Resolving issues with the softcover server
 
-In fact, I ran into an issue sometimes where the server running in the container would hang or the container itself would exit. This happened when I renamed the chapter markdown files or there was an error in the markdown file that caused a file parsing error.
+In some situations you might run into an issue sometimes where the server running in the container will hang or the container process would exit.
 
-In this scenario running the `sc build:html` command will display the errors so you can debug the issue.
+This might happen when you rename the chapter markdown files where the names are out of sync with the Book.txt file. It could also happen if there is an error in the markdown file that causes a markdown file parsing error by the `sc build:html` command.
 
-With the file renaming issue, stoping and restarting the container and running the `sc server` command again seemed to fix the issue.
-
-> Tip: Don't forget to rename the filenames in Book.txt when you rename the markdown files in the chapters directroy.
+In this scenario executing the Docker `sc build:html` command manually will display the errors so you can debug and fix the issue.
 
 To check if the container exited you can run this Docker command:
 
@@ -175,7 +175,15 @@ docker ps -a
 
 This command will show all running and stopped containers on your system.
 
-Assuming you have resolved any issue you are having, you can stop the container (which will automatically remove it since we are using the --rm flag) and then run the command again:
+If the container has exited you can fix the issue by using the `sc build:html` command and then run the server command again:
+
+```console
+docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
+```
+
+If the container has not exited, you can fix the issue and see if the server starts working again.
+
+If not, then stop the container first then run the server command:
 
 ```console
 docker stop <contained-hash-id>
