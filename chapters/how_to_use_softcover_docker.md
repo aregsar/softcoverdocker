@@ -192,9 +192,9 @@ docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc ser
 
 ## Publishing the book to softcover.io
 
-In order to publish your book you need to login to softcover.io service and then issue the softcover CLI publishing commands.
+In order to publish your book you need to login to softcover.io service and then issue the softcover CLI publishing commands to publish your html and ebook content to the service.
 
-Because of the need to login, the only way you can accomplish this is to interactively log into the running Docker container and then from the container bash shell log into softcover.io and run the publishing commands.
+Because of the need to login, the only way you can accomplish this using Docker is to interactively log into the running Docker container and then from the container bash shell log into softcover.io to run the publishing commands.
 
 This section will show you this process and the commands you need to run.
 
@@ -204,41 +204,43 @@ To run the container in interactive mode we need to run the container with the -
 docker run --rm -it -v `pwd`:/book softcover/softcover:latest bash
 ```
 
-This will drop us into the container in the `/book` working directory:
+This will drop us into the container in the `/book` working directory.
+
+Run the `pwd` command to verify this:
 
 ```console
 # pwd
+
 \book
 ```
 
-Now run the following commands in the bash shell to login, build and publish to the softcover service then logout:
+Now run the following commands in the bash shell to login, build and publish to the softcover service:
 
 ```console
 sc login
 sc clean
+sc build:all
+sc build:preview
+sc publish
+# not stricltly nessacary to logout
+sc logout
+```
+
+We can re-run these commands anytime we wish to update our published book on the softcover.io service.
+
+As an alternative, we can run `sc deploy` command instead of the individual build and publish commands:
+
+```console
+sc login
+sc clean
+# the sc deploy command calls the build:all,build:preview and sc publish
 sc deploy
 sc logout
 ```
 
-Instead of running `sc deploy` above we can explicitly run the build and publish commands:
-
-```console
-sc login
-sc clean
-# the next three commands replace the sc deploy command
-sc build:all
-sc build:preview
-sc publish
-sc logout
-```
-
-We can re-run these commands anytime we wish to update our published book on softcover.io.
-
-Ofcource you can ommit running `sc publish` to inspect the files before you decide to publish.
-
 > Please refer to softcover documentation for full description of all commands
 
-Finally once we are done publishing, we can exit the bash shell by typing `exit` which will terminate the bash session and the container process.
+Once we are done publishing, we can exit the bash shell by typing `exit` which will terminate the bash session and the container process.
 
 ## Inspecting the published content
 
@@ -246,11 +248,13 @@ Normally if we were logging into softcover by executing the `sc login` command f
 
 However since we logged in from a container instead, we will need to manually log into the softcover website to be able to see our published book or article.
 
+Once you are logged in, you can see your published content.
+
 ## Conclusion
 
 In this article I showed you how you can use the softcover docker container to build, locally serve and publish your book or article to the softcover service.
 
-By using the softcover docker image, you dont have to deal with any installationa and upgrade issues with the softcover CLI tooling. Furthermore you don't have to pollute your work environment with additional tooling that you dont need to have permanently installed
+By using the softcover docker image, you don't have to deal with any installation and upgrade issues with the softcover CLI tooling. Furthermore you don't have to modify your development environment with additional tooling that you don't want to have permanently installed.
 
 ## Resources
 
