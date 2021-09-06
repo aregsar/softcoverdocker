@@ -121,31 +121,43 @@ Correspondingly, the `chapters` directory contains the single markdown file list
 
 Notice also that there is no preface or table of contents either in the Book.txt file for an article.
 
-## Building and Serving the generated html files
+## Building and Serving html
 
-As we author our book or article, by adding and editing markdown files in the chapters directory, we might like to build and preview the content in a web browser.
+As we add, remove and edit markdown files in the chapters directory, we might want to build and preview the content in a web browser.
 
-One way to do this is to build the html files using the following command from within the `mybook` directory.
+One way to do this is to build the html files using the `sc build:html` command.
+
+To do so using our docker image we can run the following Docker command from within the `mybook` directory:
 
 ```console
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:html
 ```
 
-This command uses the markdown files in the `./chapters` directory as source files that are used to build corresponding html output files in the `./html` directory.
+This command uses the markdown files in `./chapters` directory mapped to the `/book/chapters` directory of the container as source files and builds corresponding html output files in the `/book/html` directory in the container which are mapped back to our `./html` directory.
 
-In addition to building the html files we can build and also serve them to our local web browser by running the following command instead:
+The html generator also generates a `book` html file which includes all the chapters compiled to single html file.
+
+We can then view the html chapter files or the `book` html file mapped to our local `./html` directory, by using a web browser to open the files.
+
+In addition to building the html files we can build and also serve the `book` html file to our local web browser by running the following command instead:
 
 ```console
 docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
 ```
 
-The above docker command runs the `sc server` command in the container which in turn runs the `sc build:html` to build and publish the markdown files to the `/book` container directory. The `sc server` command then starts up a web server inside the Docker container that serves the html files on port 4000 of the container.(The port number is exposed in the dockerfile)
+The above docker command runs the `sc server` softcover command in the container.
 
-Our docker command also maps the container port 4000 to our local port 4000 which allows us to navigate to localhost:4000 with our local web browser to view our book html content.
+The command first runs the `sc build:html` to build the book html file in the `/book/html` directory of the container, then starts up a web server inside the container that serves the `book` html file through port 4000 of the container.
 
-When we change the content of the `chapters` directory the change is detected and the `sc build:html` command is re-run and web server is reloaded, allowing us to instantly preview the output of our changes.
+> The port number 4000 is exposed in the dockerfile.
 
-Of course we can always run the `sc build:html` command using the container to force a rebuild.
+Since the docker command maps the container port 4000 to our local port 4000 , we can to navigate to localhost:4000 with our local web browser to view the html content.
+
+As we change the content of the `chapters` directory the change is detected and the `sc build:html` command is re-run and web server is reloaded, allowing us to instantly preview the output of our changes.
+
+Of course we can always run the `sc build:html` command using the container to force a regeneration of the html content.
+
+## Resolving issues with the softcover server
 
 In fact, I ran into an issue sometimes where the server running in the container would hang or the container itself would exit. This happened when I renamed the chapter markdown files or there was an error in the markdown file that caused a file parsing error.
 
