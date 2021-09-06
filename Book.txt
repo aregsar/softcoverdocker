@@ -1,0 +1,3 @@
+cover
+maketitle
+how_to_use_softcover_docker.md
