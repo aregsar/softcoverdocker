@@ -1,6 +1,6 @@
 # How to use the softcover docker image to publish your book
 
-This article will show you how to use the softcover docker image to run the softcover commands needed to create and publish your book or article to the softcover service.
+This article will show you how to use the softcover docker image to develop and publish your book or article to the softcover service.
 
 When I tried to use the softcover CLI command line tooling on my Mac OS machine, I ran into a few installation issues.
 
@@ -8,29 +8,29 @@ Fortunately I found a Docker image with the softcover tools pre installed that w
 
 I was able to use this Docker image to build and publish my book (in progress) to the platform.
 
-I had to figure out a few things along the way when using the image and I decided to document the commands I used so that others can benefit from my experience.
+In this article I want to share the docker and softcover CLI commands I am using to develop and publish my book on Softcover.
 
-This article assumes that you have Docker installed on your machine.
+The article assumes that you have Docker installed on your machine.
 
 You can download and install Docker desktop from [https://docs.docker.com/desktop/mac/install](https://docs.docker.com/desktop/mac/install).
 
-## Pulling the image
+## Pulling the Softcover Docker image
 
-The first thing you want to do is pull down the image from Docker hub. It is fairly large image so be warned that it will take a bit of time.
+The first thing you want to do is pull down the image from Docker hub. It is a fairly large image so be warned that it will take a bit of time and space.
 
-The image is hosted at `[https://hub.docker.com/r/softcover/softcover](https://hub.docker.com/r/softcover/softcover)` and the its repo is at [https://github.com/softcover/softcover-docker](https://github.com/softcover/softcover-docker)
+The image is hosted at [https://hub.docker.com/r/softcover/softcover](https://hub.docker.com/r/softcover/softcover) and the its repo is at [https://github.com/softcover/softcover-docker](https://github.com/softcover/softcover-docker)
 
-Let's pull the image:
+We can pull the image using the following command:
 
 ```console
 docker pull softcover/softcover
 ```
 
-This command will pull the latest softcover image onto your machine.
+This command will pull the latest softcover image onto our machine.
 
 ## Creating a new book
 
-Now that we have the image downloaded we can run the docker command to create our book.
+Now that we have the image downloaded we can run the softcover command to create our book.
 
 But first let's setup a directory to hold all our books/articles:
 
@@ -38,43 +38,51 @@ But first let's setup a directory to hold all our books/articles:
 mkdir mybooks && cd mybooks
 ```
 
-From within that directory run the the command to create a new book.:
+From within that directory run the following Docker command to create a new book:
 
 ```console
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc new mybook
 ```
 
-Here we have told the container to run the `sc new` command to create a new book named `mybook`.
+Here we have told the container to run the softcover `sc new` command to create a new book named `mybook`.
 
-The command will create a new directory named `mybook` in the current directory.
+The command will create a new directory named `mybook` in the current directory of our local machine.
 
-If we wanted to create an article instead of a book, we would just need to add the `-a` option to the `sc new` command.
+Note that Although we have not specified a working directory option on the command line, the Docker image dockerfile specifies a `/book` working directory.
+
+This is why we have a specified a volume map option (-v) that maps the current directory `pwd` to the `/book` directory in the container.
+
+With this mapping in place, when we run the container `sc new mybook` command, the `mybook` directory is created in the container's `/book` working directory and the working directory content is synched into our current directory resulting in a`mybook` directory in our current directory.
+
+In the event that we want to create an article instead of a book, we would just need to add the `-a` option to the `sc new` command:
 
 ```console
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc new -a myarticle
 ```
 
-> Note: Although we have not specified a working directory option on the command line, the Docker image dockerfile specifies a `/book` working directory. This is why we have a specified a volume map option that maps the current directory `pwd` to the `/book` directory in the container. With this mapping, when we run the `sc new mybook` command, the `mybook` directory is created in the container's `/book` working directory and the working directory content is synched into our current directory.
-
 ## Exploring the book directory
 
-Now that we have created our new book, let's move into the `mybook` directory and explore its content.
+Now that we have created our new book, let's move into the `mybook` directory and explore its content:
 
 ```console
 cd mybook
 ```
 
-The softcover documentation available at []() provides detailed explanation of the content of this directory.
+The softcover documentation available at [xxx]() provides detailed explanation of the content of this directory.
 
 For our purposes, I will just provide enough detail so we can understand how the book building and publishing commands in the following sections work.
 
-The mybook directory contains contains a `book.txt` file that specifies the table of contents, the preface and the individual book chapters of the published book.
+The mybook directory contains a `Book.txt` file that specifies the table of contents, the preface and the individual book chapters of a published book.
 
-Lets see the contents of this file:
+Let's look at the contents of this file by running the following command:
 
 ```console
-$ cat book.txt
+cat book.txt
+```
 
+The output shows the file content:
+
+```console
 cover
 frontmatter:
 maketitle
@@ -85,41 +93,44 @@ a_chapter.md
 yet_another_chapter.md
 ```
 
-We can see a number of markdown files with the .md extension listed in the file.
+We can see a number of markdown files (files with the .md extension) listed in the file.
 
 All these markdown files will have a corresponding file of the same name in the `./chapters` directory.
 
-Lets see the contents of the chapters directory:
+Let's list the contents of the chapters directory:
 
 ```console
-$ ls -l chapters
+ls -l chapters
+```
 
+We can see the default content that the `sc new` command generated for us:
+
+```console
 a_chapter.md
 yet_another_chapter.md
 ```
 
-As you can see the chapters directory contains the markdown files listed in the Book.txt file.
+As you can see the chapters directory contains the same set of markdown files listed in the `Book.txt` file.
 
-These set of files are the source files used to generate the html and ebook format files of our book.
+These files are the source files that are used to generate the html and ebook formatted files of our published book.
 
-The order of the chapter files listed under the `mainmatter:` section determines their corresponding chapter order in the published html or ebook.
+The order of the chapter files listed under the `mainmatter:` section of the `Book.txt` file determines their corresponding chapter order in the published html or ebook.
 
-The `preface.md` file will hold your own custom preface content for your book and the table of content is autogenerated for you.
+The `preface.md` file can be edited to provide your own custom preface content for your book and the table of content is autogenerated for you.
 
-Note that if we had created an article instead of a book, there would only be a single chapter file in the Book.txt file.
+Note that if we create an article instead of a book, there would only be a single chapter file in the `Book.txt` file.
 
-Here is the content of the Book.txt file for an article:
+Here is the content of the `Book.txt` file when we create an article:
 
 ```console
-$ cat book.txt
 cover
 maketitle
 a_chapter.md
 ```
 
-Correspondingly, the `chapters` directory contains the single markdown file listed in the Book.txt file.
+Correspondingly, the `chapters` directory for an article contains the single markdown file listed in the `Book.txt` file.
 
-Notice also that there is no preface or table of contents either in the Book.txt file for an article.
+Notice that the preface or table of contents does not exist for an article as well.
 
 ## Building html files
 
