@@ -90,6 +90,7 @@ tableofcontents
 preface.md
 mainmatter:
 a_chapter.md
+another_chapter.md
 yet_another_chapter.md
 ```
 
@@ -107,6 +108,8 @@ We can see the default content that the `sc new` command generated for us:
 
 ```console
 a_chapter.md
+another_chapter.md
+preface.md
 yet_another_chapter.md
 ```
 
@@ -144,15 +147,33 @@ To do so using our docker image we can run the following Docker command from wit
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:html
 ```
 
-This command uses the markdown files in `./chapters` directory mapped to the `/book/chapters` directory of the container as source files and builds corresponding html output files in the `/book/html` directory in the container which are mapped back to our `./html` directory.
+This command uses the markdown files in `./chapters` directory mapped to the `/book/chapters` directory of the container as source files and builds corresponding html output files for each chapter file in the `/book/html` directory in the container which are mapped back to our `./html` directory.
 
-The html generator also generates a `book` html file which includes all the chapters compiled to single html file.
+The html generator also generates a `mybook.html` file which includes all the chapters compiled to single html file.
 
-We can then view the html chapter files or the `book` html file from our local `./html` directory, by using a web browser to open the files.
+Here is the content of the `html` directory after running the `sc build` command.
+
+```console
+a_chapter.html
+a_chapter_fragment.html
+another_chapter.html
+another_chapter_fragment.html
+frontmatter.html
+frontmatter_fragment.html
+images -> ../images
+mybook.html
+stylesheets
+yet_another_chapter.html
+yet_another_chapter_fragment.html
+```
+
+In addition to the `mybook.html` file and html files for each chapter, there are fragment files for each chapter that contain the content of the html body and also stylesheet and image directories.
+
+We can then view the `mybook.html` file from our local `./html` directory, by using a web browser to open the file.
 
 ## Serving generated html files
 
-In addition to building the html files we can build and also serve the `book` html file to our local web browser by running the following command instead:
+In addition to building the html files we can build and also serve the `mybook.html` file to our local web browser by running the following command instead:
 
 ```console
 docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
@@ -160,19 +181,19 @@ docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc ser
 
 The above docker command runs the `sc server` softcover command in the container.
 
-The command first runs the `sc build:html` to build the `book` html file in the `/book/html` directory of the container, then starts up a web server inside the container that serves the `book` html file through port 4000 of the container.
+The command internally runs the `sc build:html` to build the `mybook.html` file in the `/book/html` directory of the container, then starts up a web server inside the container that serves the `mybook.html` file through port 4000 of the container.
 
-> The port number 4000 is exposed in the dockerfile.
+Since the docker command maps the container port 4000 to our local port 4000, we can navigate to localhost:4000 with our local web browser to view the html content.
 
-Since the docker command maps the container port 4000 to our local port 4000 , we can navigate to localhost:4000 with our local web browser to view the html content.
+> The port number 4000 is exposed in the [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile).
 
 As we change the content of the `chapters` directory the change is detected and the `sc build:html` command is re-run and web server is reloaded, allowing us to instantly preview the output of our changes.
 
-Of course we can always run the `sc build:html` command using the container to force a regeneration of the html content.
+Of course we can always manually run the `sc build:html` command using the container to force a regeneration of the html content.
 
 ## Resolving issues with the softcover server
 
-In some situations you might run into an issue sometimes where the server running in the container will hang or the container process would exit.
+In some situations you might run into an issue where the server running in the container will hang or the container process would exit.
 
 This might happen when you rename the chapter markdown files where the names are out of sync with the Book.txt file. It could also happen if there is an error in the markdown file that causes a markdown file parsing error by the `sc build:html` command.
 
