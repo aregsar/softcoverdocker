@@ -235,21 +235,23 @@ docker ps -a
 
 ## Publishing the book to softcover.io
 
-In order to publish your book you need to login to softcover.io service and then issue the softcover CLI publishing commands to publish your html and ebook content to the service.
+In order to publish your html and ebook content to the service you need to login to the softcover.io service and then issue the softcover CLI publishing commands.
 
-Because of the need to login, the only way you can accomplish this using Docker is to interactively log into the running Docker container and then from the container bash shell log into softcover.io to run the publishing commands.
+Because of the need to login, the only way you can accomplish this using Docker is to interactively log into the running container bash shell and then from there log into softcover.io to run the softcover publishing commands.
 
-This section will show you this process and the commands you need to run.
-
-To run the container in interactive mode we need to run the container with the -it flag and execute the bash command.
+To run the container in interactive mode we need to run the container with the `-it` option and execute the bash command.
 
 ```console
 docker run --rm -it -v `pwd`:/book softcover/softcover:latest bash
 ```
 
-This will drop us into the container in the `/book` working directory.
+This will drop us into the container in the `/book` working directory as shown below:
 
-Run the `pwd` command to verify this:
+```console
+root@15cf54a5bec5:/book#
+```
+
+We can run the `pwd` command to verify this:
 
 ```console
 root@15cf54a5bec5:/book# pwd
@@ -269,7 +271,6 @@ sc build:all
 sc build:preview
 #publish to softcover.io
 sc publish
-# not stricltly nessacary to logout
 sc logout
 #exit the container
 exit
@@ -283,11 +284,12 @@ As an alternative, we can run `sc deploy` command instead of the individual buil
 sc login
 sc clean
 # the sc deploy command calls the build:all, build:preview and sc publish
-# you can customize the command for articles by commenting out build:preview in the .softcover-deploy file
 sc deploy
 sc logout
 exit
 ```
+
+The `sc deploy` command internally calls the build:all, build:preview and sc publish commands based on the configuration in the `.softcover-deploy` file. You can customize the `sc deploy` command for articles by commenting out build:preview in the .softcover-deploy file.
 
 > Please refer to softcover documentation for full description of all commands
 
