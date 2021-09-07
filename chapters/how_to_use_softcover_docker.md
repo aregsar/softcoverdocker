@@ -259,7 +259,7 @@ sc login
 sc clean
 # builds all the book formats
 sc build:all
-# builds a preview version of the book using the page ranges in the preview.yml file
+# builds a preview version of the book using the page ranges in the config/book.yml file
 # omit this command when building an article
 sc build:preview
 #publish to softcover.io
@@ -277,7 +277,8 @@ As an alternative, we can run `sc deploy` command instead of the individual buil
 ```console
 sc login
 sc clean
-# the sc deploy command calls the build:all,build:preview and sc publish
+# the sc deploy command calls the build:all, build:preview and sc publish
+# you can customize the command for articles by commenting out build:preview in the .softcover-deploy file
 sc deploy
 sc logout
 exit
