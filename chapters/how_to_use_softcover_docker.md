@@ -34,7 +34,7 @@ Now that we have the image downloaded we can run the softcover command to create
 
 But first let's setup a directory to hold all our books:
 
-```consloe
+```console
 mkdir mybooks && cd mybooks
 ```
 
@@ -128,7 +128,7 @@ Here is the content of the `Book.txt` file when we create an article:
 ```console
 cover
 maketitle
-a_chapter.md
+an_article.md
 ```
 
 Correspondingly, the `chapters` directory for an article contains the single markdown file listed in the `Book.txt` file.
@@ -151,7 +151,7 @@ This command uses the markdown files in `./chapters` directory mapped to the `/b
 
 The html generator also generates a `mybook.html` file which includes all the chapters compiled to single html file.
 
-Here is the content of the `html` directory after running the `sc build` command.
+Here is the content of the `html` directory after running the `sc build:html` command.
 
 ```console
 a_chapter.html
@@ -167,9 +167,13 @@ yet_another_chapter.html
 yet_another_chapter_fragment.html
 ```
 
-In addition to the `mybook.html` file and html files for each chapter, there are fragment files for each chapter that contain the content of the html body and also stylesheet and image directories.
+In addition to the `mybook.html` file and html files for each chapter, there are generated fragment files for each chapter that contain only the content of the html body.
 
-We can then view the `mybook.html` file from our local `./html` directory, by using a web browser to open the file.
+There is also a stylesheet directory and a symlink to the images directory in the parent directory. This is where you can make updates to change the style and media content of your book that are references from the generated html files.
+
+The html directory content for an article is similar.
+
+We can view the `mybook.html` file from our local `./html` directory, by using a web browser to open the file.
 
 ## Serving generated html files
 
@@ -190,6 +194,8 @@ Since the docker command maps the container port 4000 to our local port 4000, we
 As we change the content of the `chapters` directory the change is detected and the `sc build:html` command is re-run and web server is reloaded, allowing us to instantly preview the output of our changes.
 
 Of course we can always manually run the `sc build:html` command using the container to force a regeneration of the html content.
+
+> Tip: since running the `sc server` command also builds the html files, you don't need to run the `sc build:html` command before running the `sc server` for the first time.
 
 ## Resolving issues with the softcover server
 
@@ -241,9 +247,9 @@ This will drop us into the container in the `/book` working directory.
 Run the `pwd` command to verify this:
 
 ```console
-# pwd
+root@15cf54a5bec5:/book# pwd
 
-\book
+/book
 ```
 
 Now run the following commands in the bash shell to login, build and publish to the softcover service:
@@ -251,11 +257,17 @@ Now run the following commands in the bash shell to login, build and publish to 
 ```console
 sc login
 sc clean
+# builds all the book formats
 sc build:all
+# builds a preview version of the book using the page ranges in the preview.yml file
+# omit this command when building an article
 sc build:preview
+#publish to softcover.io
 sc publish
 # not stricltly nessacary to logout
 sc logout
+#exit the container
+exit
 ```
 
 We can re-run these commands anytime we wish to update our published book on the softcover.io service.
@@ -268,6 +280,7 @@ sc clean
 # the sc deploy command calls the build:all,build:preview and sc publish
 sc deploy
 sc logout
+exit
 ```
 
 > Please refer to softcover documentation for full description of all commands
