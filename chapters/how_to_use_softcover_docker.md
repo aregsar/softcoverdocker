@@ -6,7 +6,7 @@ A Docker image with the softcover tools pre installed was built by one of the so
 
 I was able to use this Docker image to build and publish my book (in progress) to the platform.
 
-In this article I want to share the docker and softcover CLI commands I am using to develop and publish my books and articles on softcover.io.
+In this article I want to share the docker and softcover CLI commands that I am using to develop and publish my books and articles on softcover.io.
 
 The article assumes that you have Docker installed on your machine.
 
@@ -16,7 +16,7 @@ You can download and install Docker desktop from [here](https://docs.docker.com/
 
 The first thing you want to do is pull down the image from Docker hub. It is a fairly large image so be warned that it will take a bit of time and space.
 
-The image is hosted [here](https://hub.docker.com/r/softcover/softcover) and the its Github repo is available [here](https://github.com/softcover/softcover-docker)
+The image is hosted [here](https://hub.docker.com/r/softcover/softcover) and its Github repo is available [here](https://github.com/softcover/softcover-docker)
 
 We can pull the image using the following Docker command:
 
@@ -24,7 +24,7 @@ We can pull the image using the following Docker command:
 docker pull softcover/softcover
 ```
 
-This command will pull the latest softcover image onto our machine.
+This command will pull the latest softcover Docker image onto our machine.
 
 ## Creating a new book
 
@@ -48,11 +48,11 @@ The command will create a new directory named `mybook` in the current directory 
 
 Note that Although we have not specified a working directory option on the command line, the Docker image [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile) specifies a `/book` working directory.
 
-This is why we have specified a volume map option (-v) that maps the current directory `pwd` to the `/book` directory in the container.
+This is why we have specified a volume map command line option (-v) that maps the current directory `pwd` to the `/book` directory in the container.
 
 With this mapping in place, when we run the container `sc new mybook` command, the `mybook` directory is created in the container's `/book` working directory.
 
-Since the working directory is volume mapped to our local current directory, its content will be reflected in our current directory. This results in the `mybook` directory to be created in the current directory.
+Since the working directory is volume mapped to our local current directory, its content will be reflected in the current directory. Therefore this results in the `mybook` directory to be created in our current directory.
 
 In the event that we want to create an article instead of a book, we would just need to add the `-a` option to the `sc new` command:
 
