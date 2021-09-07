@@ -171,13 +171,11 @@ In addition to the `mybook.html` file and html files for each chapter, there are
 
 There is also a stylesheet directory and a symlink to the images directory of the parent directory. This is where you can make changes to the styles and media content that are referenced from the generated html files.
 
-The html directory content for an article is similar.
-
 We can view the `mybook.html` file from our local `./html` directory, by using a web browser to open the file.
 
-## Serving generated html files
+## Serving generated html book
 
-In addition to building the html files we can build the files and also serve the `mybook.html` file to our local web browser by running the following command instead:
+In addition to building the html files we can not only build the files, but also serve the `mybook.html` file to our local web browser by running the following command instead:
 
 ```console
 docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
@@ -193,15 +191,15 @@ Since the docker command maps the container port 4000 to our local port 4000, we
 
 As we change the markdown content of the local `chapters` directory, the changes are reflected back to the `/book/chapters` directory of the container.
 
-This change is detected in the container (via a installed monitoring process) and the `sc build:html` command is re-run to regenerate updated html files. The web server is then reloaded, allowing us to instantly preview the output of our changes in our local web browser.
+This change is detected in the container (via an installed monitoring process in the container) and the `sc build:html` command is re-run to regenerate updated html files. The web server is then reloaded, allowing us to instantly preview the output of our changes in our local web browser.
 
 Of course we can always manually run the `sc build:html` command using the container to force a regeneration of the html content.
 
-> Tip: since running the `sc server` command also builds the html files, you don't need to run the `sc build:html` command before running the `sc server` for the first time.
+> Tip: since running the `sc server` command also builds the html files, you don't need to run the `sc build:html` command before running `sc server` for the first time.
 
 ## Resolving issues with the softcover server
 
-In some situations you might run into an issue where the server running in the container will hang or the container main process, and hence the container, will exit.
+In some situations you might run into an issue where the server running in the container will hang or the container main process, and hence the container itself, will exit.
 
 This might happen when you rename the chapter markdown files where the names get out of sync with the `Book.txt` file.
 
@@ -217,15 +215,17 @@ docker ps -a
 
 This command will show all running and stopped containers on your system.
 
-If the container has exited you can fix the issue by using the `sc build:html` command and run the `sc server` command afterwards again.
+If the container has exited you can fix the issue by using the `sc build:html` command and afterwards run the `sc server` command again to start the container.
 
 If the container has not exited, you can fix the issue and see if the server starts working again.
 
-If not, then stop the container first using the command below then run the server command.
+If not, then first stop the container first using the command below:.
 
 ```console
 docker stop <container-id>
 ```
+
+Then run the `sc server` command again to start the container back up.
 
 You can see the running container id by executing the following docker command:
 
