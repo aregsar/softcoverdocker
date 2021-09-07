@@ -1,6 +1,6 @@
 # How to use the softcover docker image to publish your book
 
-This article will show you how to use the softcover docker image to develop and publish your book or article to the softcover service.
+This article will show you how to use the softcover docker image to develop and publish your book or article to the softcover.io service.
 
 When I tried to use the softcover CLI command line tooling on my Mac OS machine, I ran into a few installation issues.
 
@@ -8,19 +8,19 @@ Fortunately I found a Docker image with the softcover tools pre installed that w
 
 I was able to use this Docker image to build and publish my book (in progress) to the platform.
 
-In this article I want to share the docker and softcover CLI commands I am using to develop and publish my book on Softcover.
+In this article I want to share the docker and softcover CLI commands I am using to develop and publish my book on Softcover.io.
 
 The article assumes that you have Docker installed on your machine.
 
-You can download and install Docker desktop from [https://docs.docker.com/desktop/mac/install](https://docs.docker.com/desktop/mac/install).
+You can download and install Docker desktop from [here](https://docs.docker.com/desktop/mac/install).
 
 ## Pulling the Softcover Docker image
 
 The first thing you want to do is pull down the image from Docker hub. It is a fairly large image so be warned that it will take a bit of time and space.
 
-The image is hosted at [https://hub.docker.com/r/softcover/softcover](https://hub.docker.com/r/softcover/softcover) and the its repo is at [https://github.com/softcover/softcover-docker](https://github.com/softcover/softcover-docker)
+The image is hosted at [here](https://hub.docker.com/r/softcover/softcover) and the its Github repo is available [here](https://github.com/softcover/softcover-docker)
 
-We can pull the image using the following command:
+We can pull the image using the following Docker command:
 
 ```console
 docker pull softcover/softcover
@@ -30,15 +30,15 @@ This command will pull the latest softcover image onto our machine.
 
 ## Creating a new book
 
-Now that we have the image downloaded we can run the softcover command to create our book.
+Now that we have the image downloaded we can run the softcover command to create our book through Docker.
 
-But first let's setup a directory to hold all our books/articles:
+But first let's setup a directory to hold all our books:
 
 ```consloe
 mkdir mybooks && cd mybooks
 ```
 
-From within that directory run the following Docker command to create a new book:
+From within this directory we can run the following Docker command to create a new book:
 
 ```console
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc new mybook
@@ -48,11 +48,11 @@ Here we have told the container to run the softcover `sc new` command to create 
 
 The command will create a new directory named `mybook` in the current directory of our local machine.
 
-Note that Although we have not specified a working directory option on the command line, the Docker image dockerfile specifies a `/book` working directory.
+Note that Although we have not specified a working directory option on the command line, the Docker image [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile) specifies a `/book` working directory.
 
 This is why we have a specified a volume map option (-v) that maps the current directory `pwd` to the `/book` directory in the container.
 
-With this mapping in place, when we run the container `sc new mybook` command, the `mybook` directory is created in the container's `/book` working directory and the working directory content is synched into our current directory resulting in a`mybook` directory in our current directory.
+With this mapping in place, when we run the container `sc new mybook` command, the `mybook` directory is created in the container's `/book` working directory and the working directory content is volume mapped into our current directory resulting in a `mybook` directory created in our current directory.
 
 In the event that we want to create an article instead of a book, we would just need to add the `-a` option to the `sc new` command:
 
@@ -68,7 +68,7 @@ Now that we have created our new book, let's move into the `mybook` directory an
 cd mybook
 ```
 
-The softcover documentation available at [xxx]() provides detailed explanation of the content of this directory.
+The softcover documentation available [here](https://manual.softcover.io/book) provides detailed explanation of the content of this directory.
 
 For our purposes, I will just provide enough detail so we can understand how the book building and publishing commands in the following sections work.
 
