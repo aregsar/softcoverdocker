@@ -2,13 +2,11 @@
 
 This article will show you how to use the softcover docker image to develop and publish your book or article to the softcover.io service.
 
-When I tried to use the softcover CLI command line tooling on my Mac OS machine, I ran into a few installation issues.
-
-Fortunately I found a Docker image with the softcover tools pre installed that was build by one of the softcover team members.
+A Docker image with the softcover tools pre installed was built by one of the softcover team members.
 
 I was able to use this Docker image to build and publish my book (in progress) to the platform.
 
-In this article I want to share the docker and softcover CLI commands I am using to develop and publish my book on Softcover.io.
+In this article I want to share the docker and softcover CLI commands I am using to develop and publish my books and articles on softcover.io.
 
 The article assumes that you have Docker installed on your machine.
 
@@ -18,7 +16,7 @@ You can download and install Docker desktop from [here](https://docs.docker.com/
 
 The first thing you want to do is pull down the image from Docker hub. It is a fairly large image so be warned that it will take a bit of time and space.
 
-The image is hosted at [here](https://hub.docker.com/r/softcover/softcover) and the its Github repo is available [here](https://github.com/softcover/softcover-docker)
+The image is hosted [here](https://hub.docker.com/r/softcover/softcover) and the its Github repo is available [here](https://github.com/softcover/softcover-docker)
 
 We can pull the image using the following Docker command:
 
@@ -50,9 +48,11 @@ The command will create a new directory named `mybook` in the current directory 
 
 Note that Although we have not specified a working directory option on the command line, the Docker image [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile) specifies a `/book` working directory.
 
-This is why we have a specified a volume map option (-v) that maps the current directory `pwd` to the `/book` directory in the container.
+This is why we have specified a volume map option (-v) that maps the current directory `pwd` to the `/book` directory in the container.
 
-With this mapping in place, when we run the container `sc new mybook` command, the `mybook` directory is created in the container's `/book` working directory and the working directory content is volume mapped into our current directory resulting in a `mybook` directory created in our current directory.
+With this mapping in place, when we run the container `sc new mybook` command, the `mybook` directory is created in the container's `/book` working directory.
+
+Since the working directory is volume mapped to our local current directory, its content will be reflected in our current directory. This results in the `mybook` directory to be created in the current directory.
 
 In the event that we want to create an article instead of a book, we would just need to add the `-a` option to the `sc new` command:
 
@@ -94,7 +94,7 @@ another_chapter.md
 yet_another_chapter.md
 ```
 
-We can see a number of markdown files (files with the .md extension) listed in the file.
+We can see a number of markdown files (files with the .md extension) listed in this file.
 
 All these markdown files will have a corresponding file of the same name in the `./chapters` directory.
 
@@ -133,7 +133,7 @@ an_article.md
 
 Correspondingly, the `chapters` directory for an article contains the single markdown file listed in the `Book.txt` file.
 
-Notice that the preface or table of contents does not exist for an article as well.
+Notice that preface or table of contents does not exist for an article as well.
 
 ## Building html files
 
@@ -147,9 +147,9 @@ To do so using our docker image we can run the following Docker command from wit
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:html
 ```
 
-This command uses the markdown files in `./chapters` directory mapped to the `/book/chapters` directory of the container as source files and builds corresponding html output files for each chapter file in the `/book/html` directory in the container which are mapped back to our `./html` directory.
+This command uses the markdown files in `./chapters` directory mapped to the `/book/chapters` directory of the container as source files. For each source file, It builds corresponding html output files in the `/book/html` directory of the container, which are reflected back to our local `./html` directory.
 
-The html generator also generates a `mybook.html` file which includes all the chapters compiled to single html file.
+The html generator also generates a `mybook.html` file which includes the html content of all the individual chapters, compiled into a single html file.
 
 Here is the content of the `html` directory after running the `sc build:html` command.
 
@@ -169,7 +169,7 @@ yet_another_chapter_fragment.html
 
 In addition to the `mybook.html` file and html files for each chapter, there are generated fragment files for each chapter that contain only the content of the html body.
 
-There is also a stylesheet directory and a symlink to the images directory in the parent directory. This is where you can make updates to change the style and media content of your book that are references from the generated html files.
+There is also a stylesheet directory and a symlink to the images directory of the parent directory. This is where you can make changes to the styles and media content that are referenced from the generated html files.
 
 The html directory content for an article is similar.
 
