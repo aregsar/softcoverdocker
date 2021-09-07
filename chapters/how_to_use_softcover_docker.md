@@ -283,9 +283,9 @@ exit
 
 The `sc deploy` command internally calls the build:all, build:preview and publish commands based on the configuration in the `.softcover-deploy` file.
 
-You can customize the `sc deploy` command for publishing an article for example by commenting out `build:preview` configuration line in the `.softcover-deploy` file.
+For example you can customize the `sc deploy` command for publishing an article to not execute the `sc build:preview` command. See [here](https://manual.softcover.io/book/customization#sec-customizing_deploys) for further details.
 
-> Please refer to softcover documentation for full description of all commands.
+> Refer to softcover documentation for full description of all commands.
 
 Once we are done publishing, we exit the bash shell by typing `exit` which will terminate the bash session and the container process.
 
