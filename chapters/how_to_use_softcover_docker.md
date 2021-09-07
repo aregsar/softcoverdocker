@@ -235,31 +235,23 @@ docker ps -a
 
 ## Publishing the book to softcover.io
 
-In order to publish your html and ebook content to the service you need to login to the softcover.io service and then issue the softcover CLI publishing commands.
+In order to publish your html and ebook content to softcover.io, you need to login to the service and then issue the softcover CLI publishing commands.
 
-Because of the need to login, the only way you can accomplish this using Docker is to interactively log into the running container bash shell and then from there log into softcover.io to run the softcover publishing commands.
+Because of the need to login, the only way you can accomplish this using Docker is to interactively log into the running container bash shell and then from there log into softcover.io to run the publishing commands.
 
-To run the container in interactive mode we need to run the container with the `-it` option and execute the bash command.
+To run the container in interactive mode we need to use the `-it` option and execute the bash command:
 
 ```console
 docker run --rm -it -v `pwd`:/book softcover/softcover:latest bash
 ```
 
-This will drop us into the container in the `/book` working directory as shown below:
+This will drop us into the container in the `/book` working directory as command prompt shows:
 
 ```console
 root@15cf54a5bec5:/book#
 ```
 
-We can run the `pwd` command to verify this:
-
-```console
-root@15cf54a5bec5:/book# pwd
-
-/book
-```
-
-Now run the following commands in the bash shell to login, build and publish to the softcover service:
+We can run the following commands in the interactive shell to login, build and publish to the softcover.io service:
 
 ```console
 sc login
@@ -289,26 +281,24 @@ sc logout
 exit
 ```
 
-The `sc deploy` command internally calls the build:all, build:preview and sc publish commands based on the configuration in the `.softcover-deploy` file. You can customize the `sc deploy` command for articles by commenting out build:preview in the .softcover-deploy file.
+The `sc deploy` command internally calls the build:all, build:preview and publish commands based on the configuration in the `.softcover-deploy` file.
 
-> Please refer to softcover documentation for full description of all commands
+You can customize the `sc deploy` command for publishing an article for example by commenting out `build:preview` configuration line in the `.softcover-deploy` file.
 
-Once we are done publishing, we can exit the bash shell by typing `exit` which will terminate the bash session and the container process.
+> Please refer to softcover documentation for full description of all commands.
+
+Once we are done publishing, we exit the bash shell by typing `exit` which will terminate the bash session and the container process.
 
 ## Inspecting the published content
 
-Normally if we were logging into softcover by executing the `sc login` command from our host machine we could navigate to the softcover service and be automatically logged in.
+Normally if we were logging into softcover by executing the `sc login` command from our host machine we could navigate to the softcover.io service using our web browser and be automatically logged in.
 
 However since we logged in from a container instead, we will need to manually log into the softcover website to be able to see our published book or article.
 
-Once you are logged in, you can see your published content.
+Once you are logged in, you can browse all your published content.
 
 ## Conclusion
 
-In this article I showed you how you can use the softcover docker container to build, locally serve and publish your book or article to the softcover service.
+In this article I showed you how you can use the softcover docker container to build, locally serve and publish your book or article to the softcover.io service.
 
 By using the softcover docker image, you don't have to deal with any installation and upgrade issues with the softcover CLI tooling. Furthermore you don't have to modify your development environment with additional tooling that you don't want to have permanently installed.
-
-## Resources
-
-The following links may be helpful:
