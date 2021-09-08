@@ -72,7 +72,7 @@ The softcover documentation available [here](https://manual.softcover.io/book) p
 
 For our purposes, I will just provide enough detail so we can understand how the book building and publishing commands in the following sections work.
 
-The mybook directory contains a `Book.txt` file that specifies the table of contents, the preface and the individual book chapters of a published book.
+The `mybook` directory contains a `Book.txt` file that specifies the table of contents, the preface and the individual book chapters of a published book.
 
 Let's look at the contents of this file by running the following command:
 
@@ -133,11 +133,11 @@ an_article.md
 
 Correspondingly, the `chapters` directory for an article contains the single markdown file listed in the `Book.txt` file.
 
-Notice that preface or table of contents does not exist for an article as well.
+Notice that preface or table of contents does not exist for an article.
 
 ## Building html files
 
-As we add, remove and edit markdown files in the chapters directory, we might want to build and preview the content in a web browser.
+As we add, remove and edit markdown files in the chapters directory, we might want to build and preview the updated content in a web browser.
 
 One way to do this is to build the html files using the `sc build:html` command.
 
@@ -147,7 +147,11 @@ To do so using our docker image we can run the following Docker command from wit
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:html
 ```
 
-This command uses the markdown files in `./chapters` directory mapped to the `/book/chapters` directory of the container as source files. For each source file, It builds corresponding html output files in the `/book/html` directory of the container, which are reflected back to our local `./html` directory.
+When we make changes to the markdown files in our local `chapters` directory, these changes are reflected to the container's `/book/chapters` directory when we run the docker command with the volume mapping (-v) option.
+
+The `sc build:html` command, executed in the container, uses the markdown files in the `/book/chapters` directory of the container as source files to generate the html content in the container's `/book/html` directory.
+
+For each source file, It builds corresponding html output files in the `/book/html` directory of the container, which are reflected back to our local `html` directory.
 
 The html generator also generates a `mybook.html` file which includes the html content of all the individual chapters, compiled into a single html file.
 
@@ -171,11 +175,13 @@ In addition to the `mybook.html` file and html files for each chapter, there are
 
 There is also a stylesheet directory and a symlink to the images directory of the parent directory. This is where you can make changes to the styles and media content that are referenced from the generated html files.
 
-We can view the `mybook.html` file from our local `./html` directory, by using a web browser to open the file.
+We can view the `mybook.html` file from our local `html` directory, by using a web browser to open the file.
 
 ## Serving generated html book
 
-In addition to building the html files we can not only build the files, but also serve the `mybook.html` file to our local web browser by running the following command instead:
+The `sc build:html` command from the previous section only builds the html files.
+
+However in addition to building the html files, we can also serve the `mybook.html` by running the following command instead:
 
 ```console
 docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
@@ -183,17 +189,19 @@ docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc ser
 
 The above docker command runs the `sc server` softcover command in the container.
 
-The command internally runs the `sc build:html` to build the `mybook.html` file in the `/book/html` directory of the container, then starts up a web server inside the container that serves the `/book/html/mybook.html` file through port 4000 of the container.
+The command internally runs the `sc build:html` command to build the `mybook.html` file in the `/book/html` directory of the container. It then starts up a web server inside the container that serves the generated `/book/html/mybook.html` file through port 4000 of the container.
 
 Since the docker command maps the container port 4000 to our local port 4000, we can navigate to localhost:4000 with our local web browser to view the html content of the `/book/html/mybook.html` file served through the container.
 
 > The port number 4000 is exposed in the [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile).
 
-As we change the markdown content of the local `chapters` directory, the changes are reflected back to the `/book/chapters` directory of the container.
+Unlike the other docker commands so far, this docker command used the detached `-d` option to run the container in the background. The container will continue running in the background as long as there are no failures during the build and the web server continues to run.
 
-This change is detected in the container (via an installed monitoring process in the container) and the `sc build:html` command is re-run to regenerate updated html files. The web server is then reloaded, allowing us to instantly preview the output of our changes in our local web browser.
+As we change the markdown content of the local `chapters` directory, the changes are reflected back to the `/book/chapters` directory of the running container.
 
-Of course we can always manually run the `sc build:html` command using the container to force a regeneration of the html content.
+This change is detected in the container (via an installed monitoring process within the container) which causes the `sc build:html` command to re-run and regenerate updated html files. The web server is then reloaded, allowing us to instantly preview the output of our changes in our local web browser.
+
+Of course we can always manually run the `sc build:html` command to force a regeneration of the html content at anytime.
 
 > Tip: since running the `sc server` command also builds the html files, you don't need to run the `sc build:html` command before running `sc server` for the first time.
 
