@@ -1,10 +1,10 @@
 ---
 authors:
-  - name: "The Author"
+  - name: "Areg Sarkissian"
     image: /images/testimonial_1.png
-    contact_email: "info@softcover.io"
-    contact_twitter: "@softcover"
-    contact_fb: "http://facebook.com/softcover"
-    contact_gh: "@softcover"
+    contact_email: "aregsar@hoybay.com"
+    contact_twitter: "@aregsar"
+    contact_fb: ""
+    contact_gh: "@aregsar"
     bio: |
-      Author bio [link](https://www.softcover.io)
+      Author bio [Areg Sarkissian](https://aregsar.com/about)
