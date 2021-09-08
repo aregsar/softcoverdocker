@@ -289,6 +289,8 @@ For example you can customize the `sc deploy` command for publishing an article 
 
 Once we are done publishing, we exit the bash shell by typing `exit` which will terminate the bash session and the container process.
 
+> Note: Technically we can run the `sc clean`, `sc build:all` and `sc build:preview` commands with individual non interactive docker run commands, the same way as we run the `sc build:html` command. Then we can run the container interactively to just log into softcover and run the `sc publish` command. However it is easier to just run all the commands in an interactive session.
+
 ## Inspecting the published content
 
 Normally if we were logging into softcover by executing the `sc login` command from our host machine we could navigate to the softcover.io service using our web browser and be automatically logged in.
@@ -297,8 +299,47 @@ However since we logged in from a container instead, we will need to manually lo
 
 Once you are logged in, you can browse all your published content.
 
+## Changing the Book Title and Author
+
+The Title, Subtitle, Author name and book description can be updated in the `config/book.yml` and `mybook.tex` files.
+
 ## Conclusion
 
 In this article I showed you how you can use the softcover docker container to build, locally serve and publish your book or article to the softcover.io service.
 
 By using the softcover docker image, you don't have to deal with any installation and upgrade issues with the softcover CLI tooling. Furthermore you don't have to modify your development environment with additional tooling that you don't want to have permanently installed.
+
+### List of Docker softcover commands
+
+```console
+#get the softcover image
+docker pull softcover/softcover
+
+#create a new book
+docker run --rm -v `pwd`:/book softcover/softcover:latest sc new mybook
+
+#create a new article
+docker run --rm -v `pwd`:/book softcover/softcover:latest sc new -a myarticle
+
+#build the html content
+docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:html
+
+#build and serve the html content
+docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
+
+#build the html and ebook content
+docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:all
+
+#build the previe content for the book (not available for articles)
+docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:preview
+
+#run an interactive bash session
+docker run --rm -it -v `pwd`:/book softcover/softcover:latest bash
+
+#list all running and stopped containers
+docker ps -a
+
+#stop a contained by id
+#(the --rm option in the docker run commands will ensure the stoped container is automatically removed)
+docker stop <container-id>
+```
