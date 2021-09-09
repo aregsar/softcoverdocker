@@ -1,7 +1,7 @@
 ---
 slug: softcoverdocker
 filename: softcoverdocker
-title: How to use the Softcover Docker image to publish your book
+title: Softcover on Docker
 subtitle: Run softcover publishing commands from docker containers
 description: Learn how to use docker containers to run the softcover command line tool.
 author: Areg Sarkissian
