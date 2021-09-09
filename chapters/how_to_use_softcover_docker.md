@@ -303,11 +303,13 @@ Normally if we were logging into softcover by executing the `sc login` command f
 
 However since we logged in from a container instead, we will need to manually log into the softcover website to be able to see our published book or article.
 
-Once you are logged in, you can browse all your published content.
+Once we are logged in, we can browse all your published content.
 
 ## Changing the Book Title and Author
 
 The Title, Subtitle, Author name and book description can be updated in the `config/book.yml` file.
+
+The updated data will be displayed on the service once we publish.
 
 ## Conclusion
 
@@ -317,7 +319,7 @@ By using the softcover docker image, you don't have to deal with any installatio
 
 ### Softcover Documentation
 
-The softcover manual published as a softcover book can be found here[here](https://manual.softcover.io/book)
+The softcover manual published as a softcover book can be found [here](https://manual.softcover.io/book)
 
 ### List of Docker softcover commands
 
