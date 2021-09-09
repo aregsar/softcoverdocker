@@ -179,9 +179,9 @@ We can view the `mybook.html` file from our local `html` directory, by using a w
 
 ## Serving generated html book
 
-The `sc build:html` command from the previous section only builds the html files.
+The only thing the `sc build:html` command from the previous section does is build the html files.
 
-However in addition to building the html files, we can also serve the `mybook.html` by running the following command instead:
+However in addition to building the html files, we can also serve the `mybook.html` file by running the following command instead:
 
 ```console
 docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
@@ -191,11 +191,11 @@ The above docker command runs the `sc server` softcover command in the container
 
 The command internally runs the `sc build:html` command to build the `mybook.html` file in the `/book/html` directory of the container. It then starts up a web server inside the container that serves the generated `/book/html/mybook.html` file through port 4000 of the container.
 
-Since the docker command maps the container port 4000 to our local port 4000, we can navigate to localhost:4000 with our local web browser to view the html content of the `/book/html/mybook.html` file served through the container.
+Since the docker command maps the container port 4000 to our local port 4000, we can navigate to localhost:4000 with our local web browser to view the html content of the `/book/html/mybook.html` file served through the container port 4000.
 
-> The port number 4000 is exposed in the [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile).
+> Note: The port number 4000 is exposed in the [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile).
 
-Unlike the other docker commands so far, this docker command used the detached `-d` option to run the container in the background. The container will continue running in the background as long as there are no failures during the build and the web server continues to run.
+Unlike the other docker commands so far, this docker command used the detached `-d` option to run the container in the background. The container will continue running in the background as long as there are no failures during the build process, and the web server continues to run.
 
 As we change the markdown content of the local `chapters` directory, the changes are reflected back to the `/book/chapters` directory of the running container.
 
@@ -207,7 +207,7 @@ Of course we can always manually run the `sc build:html` command to force a rege
 
 ## Resolving issues with the softcover server
 
-In some situations you might run into an issue where the server running in the container will hang or the container main process, and hence the container itself, will exit.
+In some situations you might run into an issue where the server running in the container will hang or the main container process will die, causing the container to exit.
 
 This might happen when you rename the chapter markdown files where the names get out of sync with the `Book.txt` file.
 
@@ -221,31 +221,29 @@ To check if the container exited you can run this Docker command:
 docker ps -a
 ```
 
-This command will show all running and stopped containers on your system.
+This command will show all running and stopped containers on your system with their container id.
 
 If the container has exited you can fix the issue by using the `sc build:html` command and afterwards run the `sc server` command again to start the container.
 
 If the container has not exited, you can fix the issue and see if the server starts working again.
 
-If not, then first stop the container first using the command below:.
+If not, then first stop the container using the command below:.
 
 ```console
 docker stop <container-id>
 ```
 
-Then run the `sc server` command again to start the container back up.
-
-You can see the running container id by executing the following docker command:
+Then run the `sc server` command again to run a new container:
 
 ```console
-docker ps -a
+docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
 ```
 
 ## Publishing the book to softcover.io
 
 In order to publish your html and ebook content to softcover.io, you need to login to the service and then issue the softcover CLI publishing commands.
 
-Because of the need to login, the only way you can accomplish this using Docker is to interactively log into the running container bash shell and then from there log into softcover.io to run the publishing commands.
+Because of the need to login, the only way you can publish to the service using Docker is to interactively log into the running container bash shell and then from there log into softcover.io to be able to run the publish command.
 
 To run the container in interactive mode we need to use the `-it` option and execute the bash command:
 
@@ -283,7 +281,7 @@ As an alternative, we can run `sc deploy` command instead of the individual buil
 ```console
 sc login
 sc clean
-# the sc deploy command calls the build:all, build:preview and sc publish
+# by default, the sc deploy command calls the build:all, build:preview and sc publish
 sc deploy
 sc logout
 exit
@@ -291,13 +289,13 @@ exit
 
 The `sc deploy` command internally calls the build:all, build:preview and publish commands based on the configuration in the `.softcover-deploy` file.
 
-For example you can customize the `sc deploy` command for publishing an article to not execute the `sc build:preview` command. See [here](https://manual.softcover.io/book/customization#sec-customizing_deploys) for further details.
+For example you can customize the `sc deploy` command to not execute the `sc build:preview` command when publishing an article. See [here](https://manual.softcover.io/book/customization#sec-customizing_deploys) for further details.
 
-> Refer to softcover documentation for full description of all commands.
+> Refer to softcover [documentation](https://manual.softcover.io/book) for full description of all commands.
 
 Once we are done publishing, we exit the bash shell by typing `exit` which will terminate the bash session and the container process.
 
-> Note: Technically we can run the `sc clean`, `sc build:all` and `sc build:preview` commands with individual non interactive docker run commands, the same way as we run the `sc build:html` command. Then we can run the container interactively to just log into softcover and run the `sc publish` command. However it is easier to just run all the commands in an interactive session.
+> Note: Technically we can run the `sc clean`, `sc build:all` and `sc build:preview` commands with individual non interactive docker run commands, the same way as we run the `sc build:html` command. Then we can run the container interactively to just log into softcover and run the `sc publish` command. However it is easier to just run all the commands in one interactive session.
 
 ## Inspecting the published content
 
@@ -316,6 +314,10 @@ The Title, Subtitle, Author name and book description can be updated in the `con
 In this article I showed you how you can use the softcover docker container to build, locally serve and publish your book or article to the softcover.io service.
 
 By using the softcover docker image, you don't have to deal with any installation and upgrade issues with the softcover CLI tooling. Furthermore you don't have to modify your development environment with additional tooling that you don't want to have permanently installed.
+
+### Softcover Documentation
+
+The softcover manual published as a softcover book can be found here[here](https://manual.softcover.io/book)
 
 ### List of Docker softcover commands
 
