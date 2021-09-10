@@ -1,4 +1,4 @@
-# How to use the Softcover Docker image to publish your book
+# Softcover on Docker
 
 This article will show you how to use the softcover docker image to develop and publish your book or article to the softcover.io service.
 
