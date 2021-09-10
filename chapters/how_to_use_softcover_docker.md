@@ -307,7 +307,9 @@ Once we are logged in, we can browse all your published content.
 
 ## Changing the Book Title and Author
 
-The Title, Subtitle, Author name and book description can be updated in the `config/book.yml` file.
+The subtitle, author name and book description can be updated in the `config/book.yml` file.
+
+Every time we publish our book, the title setting in the `config/book.yml` file gets overwritten by the markdown heading in the first line of the first chapter markdown file or article markdown file.
 
 The updated data will be displayed on the service once we publish.
 
