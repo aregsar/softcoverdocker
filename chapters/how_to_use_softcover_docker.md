@@ -147,15 +147,17 @@ To do so using our docker image we can run the following Docker command from wit
 docker run --rm -v `pwd`:/book softcover/softcover:latest sc build:html
 ```
 
-When we make changes to the markdown files in our local `chapters` directory, these changes are reflected to the container's `/book/chapters` directory when we run the `sc build:html` command with the Docker volume mapping (-v) option.
+Anytime we run the `sc build:html` command with the Docker volume mapping (-v) option, the content of our local `chapters` directory is reflected into the container's `/book/chapters` directory.
 
-The `sc build:html` command, executed in the container, uses the markdown files mapped to the `/book/chapters` directory of the container as source files to generate the html content in the container's `/book/html` directory.
+The `sc build:html` command that is executed in the container once the container starts up, uses the markdown files in the `/book/chapters` directory of the container as source files to generate the html content in the container's `/book/html` directory.
 
-For each source file, It builds corresponding html output files in the `/book/html` directory of the container, which are reflected back to our local `html` directory through the Docker volume mapping.
+For each source file, a corresponding html output file is generated in the `/book/html` directory of the container.
 
-The html generator also generates a `mybook.html` file which includes the html content of all the individual chapters, compiled into a single html file.
+The html file generator also generates a `mybook.html` file for the entire book, that combines the html content of all the individual chapters, into a single html file.
 
-Here is the content of the local `html` directory after running the `sc build:html` command.
+The content of the `/book/html` directory is reflected back to our local `html` directory through the Docker volume mapping.
+
+Here is the content of the local `html` directory after running the `sc build:html` command:
 
 ```console
 a_chapter.html
