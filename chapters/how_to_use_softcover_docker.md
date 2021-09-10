@@ -183,7 +183,7 @@ We can view the `mybook.html` file from our local `html` directory, by using a w
 
 The only thing the `sc build:html` command from the previous section does is build the html files.
 
-However in addition to building the html files, we can also serve the `mybook.html` file by running the following command instead:
+However in addition to building the html files, we can also serve the generated `mybook.html` file by running the following command instead:
 
 ```console
 docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc server
@@ -197,15 +197,19 @@ Since the docker command maps the container port 4000 to our local port 4000, we
 
 > Note: The port number 4000 is exposed in the [Dockerfile](https://github.com/softcover/softcover-docker/blob/master/Dockerfile).
 
-Unlike the other docker commands so far, this docker command used the detached `-d` option to run the container in the background. The container will continue running in the background as long as there are no failures during the build process, and the web server continues to run.
+Unlike the other docker commands so far, this docker command uses the detached `-d` option to run the container in the background.
 
-As we change the markdown content of the local `chapters` directory, the changes are reflected back to the `/book/chapters` directory of the running container.
+The container will continue running in the background as long as the web server continues to run and there were no failures during the build process.
 
-This change is detected in the container (via an installed monitoring process within the container) which causes the `sc build:html` command to re-run and regenerate updated html files. The web server is then reloaded, allowing us to instantly preview the output of our changes in our local web browser.
+As we change the markdown content of our local `chapters` directory, the changes are reflected back to the `/book/chapters` directory of the running container.
+
+Any changes to the `/book/chapters` directory in the container are detected (via an installed monitoring process within the container), which causes the `sc build:html` command to re-run and regenerate updated html files.
+
+The web server is then reloaded, allowing us to instantly preview the output of our changes in our local web browser.
 
 Of course we can always manually run the `sc build:html` command to force a regeneration of the html content at anytime.
 
-> Tip: since running the `sc server` command also builds the html files, you don't need to run the `sc build:html` command before running `sc server` for the first time.
+> Tip: since running the `sc server` command also builds the html files, we don't need to run the `sc build:html` command before running `sc server` for the first time.
 
 ## Resolving issues with the softcover server
 
@@ -229,7 +233,7 @@ If the container has exited you can fix the issue by using the `sc build:html` c
 
 If the container has not exited, you can fix the issue and see if the server starts working again.
 
-If not, then first stop the container using the command below:.
+If not, then first stop the container using the command below:
 
 ```console
 docker stop <container-id>
@@ -245,7 +249,7 @@ docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc ser
 
 In order to publish your html and ebook content to softcover.io, you need to login to the service and then issue the softcover CLI publishing commands.
 
-Because of the need to login, the only way you can publish to the service using Docker is to interactively log into the running container bash shell and then from there log into softcover.io to be able to run the publish command.
+Because of the need to login, the only way you can publish to the service using Docker is to interactively log into the running container bash shell. Then from within the container bash shell, log into softcover.io to be able to run the `sc publish` command.
 
 To run the container in interactive mode we need to use the `-it` option and execute the bash command:
 
@@ -253,7 +257,7 @@ To run the container in interactive mode we need to use the `-it` option and exe
 docker run --rm -it -v `pwd`:/book softcover/softcover:latest bash
 ```
 
-This will drop us into the container in the `/book` working directory as command prompt shows:
+This will drop us into the container in the `/book` working directory as the following command prompt shows:
 
 ```console
 root@15cf54a5bec5:/book#
@@ -263,16 +267,17 @@ We can run the following commands in the interactive shell to login, build and p
 
 ```console
 sc login
+# clean the content of the tmp directory
 sc clean
 # builds all the book formats
 sc build:all
 # builds a preview version of the book using the page ranges in the config/book.yml file
-# omit this command when building an article
+# we can omit this command when building an article
 sc build:preview
-#publish to softcover.io
+# publish to softcover.io
 sc publish
 sc logout
-#exit the container
+# exit the container
 exit
 ```
 
@@ -297,23 +302,23 @@ For example you can customize the `sc deploy` command to not execute the `sc bui
 
 Once we are done publishing, we exit the bash shell by typing `exit` which will terminate the bash session and the container process.
 
-> Note: Technically we can run the `sc clean`, `sc build:all` and `sc build:preview` commands with individual non interactive docker run commands, the same way as we run the `sc build:html` command. Then we can run the container interactively to just log into softcover and run the `sc publish` command. However it is easier to just run all the commands in one interactive session.
+> Note: Technically only the `sc publish` command requires us to be logged into the softcover service. Therefore we can run the `sc clean`, `sc build:all` and `sc build:preview` commands before we login to the service. In fact we can also run those commands with individual non interactive docker run commands, the same way as we ran the `sc build:html` command in previous sections. Then we can run the container interactively just to log into softcover and run the `sc publish` command. However it is easier to just run all the commands in one interactive session.
 
 ## Inspecting the published content
 
-Normally if we were logging into softcover by executing the `sc login` command from our host machine we could navigate to the softcover.io service using our web browser and be automatically logged in.
+Normally if we were logging into softcover by executing the `sc login` command from our host machine we could navigate to the softcover.io service using our web browser and would be automatically logged in.
 
 However since we logged in from a container instead, we will need to manually log into the softcover website to be able to see our published book or article.
 
-Once we are logged in, we can browse all your published content.
+Once we are logged in, we can see all our published content.
 
 ## Changing the Book Title and Author
 
 The subtitle, author name and book description can be updated in the `config/book.yml` file.
 
-Every time we publish our book, the title setting in the `config/book.yml` file gets overwritten by the markdown heading in the first line of the first chapter markdown file or article markdown file.
+Every time we publish our book, the title setting in the `config/book.yml` file gets overwritten by the markdown heading on the first line of the first chapter file.
 
-The updated data will be displayed on the service once we publish.
+The updated data will be displayed on the service after we publish to the service.
 
 ## Conclusion
 
@@ -323,7 +328,7 @@ By using the softcover docker image, you don't have to deal with any installatio
 
 ### Softcover Documentation
 
-The softcover manual published as a softcover book can be found [here](https://manual.softcover.io/book)
+The softcover manual is published as a softcover book and can be found [here](https://manual.softcover.io/book)
 
 ### List of Docker softcover commands
 
