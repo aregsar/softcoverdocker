@@ -153,7 +153,9 @@ The `sc build:html` command that is executed in the container once the container
 
 For each source file, a corresponding html output file is generated in the `/book/html` directory of the container.
 
-The html file generator also generates a `mybook.html` file for the entire book, that combines the html content of all the individual chapters, into a single html file.
+The html file generator also generates a `mybook.html` file for the entire book in the `/book/html` directory.
+
+This file combines the html content of all the individual chapters, into a single html file.
 
 The content of the `/book/html` directory is reflected back to our local `html` directory through the Docker volume mapping.
 
@@ -179,7 +181,7 @@ There is also a stylesheet directory and a symlink to the images directory of th
 
 We can view the `mybook.html` file from our local `html` directory, by using a web browser to open the file.
 
-## Serving generated html book
+## Serving the generated html book
 
 The only thing the `sc build:html` command from the previous section does is build the html files.
 
@@ -190,6 +192,8 @@ docker run --rm -v `pwd`:/book -d -p 4000:4000 softcover/softcover:latest sc ser
 ```
 
 The above docker command runs the `sc server` softcover command in the container.
+
+This will allow us to automatically see our updates in the web browser, anytime we save our changes.
 
 The command internally runs the `sc build:html` command to build the `mybook.html` file in the `/book/html` directory of the container. It then starts up a web server inside the container that serves the generated `/book/html/mybook.html` file through port 4000 of the container.
 
@@ -271,7 +275,7 @@ sc login
 sc clean
 # builds all the book formats
 sc build:all
-# builds a preview version of the book using the page ranges in the config/book.yml file
+# builds a preview version of the book using the page ranges in the config/marketing.yml file
 # we can omit this command when building an article
 sc build:preview
 # publish to softcover.io
@@ -288,7 +292,7 @@ As an alternative, we can run `sc deploy` command instead of the individual buil
 ```console
 sc login
 sc clean
-# by default, the sc deploy command calls the build:all, build:preview and sc publish
+# by default, the sc deploy command calls the sc build:all, sc build:preview and sc publish commands
 sc deploy
 sc logout
 exit
@@ -308,7 +312,7 @@ Once we are done publishing, we exit the bash shell by typing `exit` which will 
 
 Normally if we were logging into softcover by executing the `sc login` command from our host machine we could navigate to the softcover.io service using our web browser and would be automatically logged in.
 
-However since we logged in from a container instead, we will need to manually log into the softcover website to be able to see our published book or article.
+However since we logged in from a container instead, we will need to navigate the softcover website and log in through the user interface to be able to see our published book or article.
 
 Once we are logged in, we can see all our published content.
 
